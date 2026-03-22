@@ -83,6 +83,10 @@ class WeChatNotifier:
 2. Review AI-generated reply draft
 3. Modify and send reply as needed"""
 
+        # Add draft link to markdown content if draft was created
+        if draft_created and draft_id:
+            markdown_content += f"\n\n**Draft Link**\n[View Draft in Gmail](https://mail.google.com/mail/u/0/#drafts?compose={draft_id})"
+
         # For WeChat webhook (assuming enterprise WeChat)
         message = {
             "msgtype": "markdown",
@@ -90,49 +94,6 @@ class WeChatNotifier:
                 "content": markdown_content
             }
         }
-
-        # Add interactive buttons if draft was created
-        if draft_created and draft_id:
-            message["msgtype"] = "template_card"
-            message["template_card"] = {
-                "card_type": "button_interaction",
-                "main_title": {
-                    "title": notification_type,
-                    "desc": f"From: {from_email}"
-                },
-                "sub_title_text": f"Subject: {subject}",
-                "horizontal_content_list": [
-                    {
-                        "keyname": "Email Category",
-                        "value": category
-                    },
-                    {
-                        "keyname": "Urgency Level",
-                        "value": urgency
-                    },
-                    {
-                        "keyname": "Draft Status",
-                        "value": "Generated"
-                    }
-                ],
-                "card_action": {
-                    "type": 1,
-                    "url": f"https://mail.google.com/mail/u/0/#drafts?compose={draft_id}"
-                },
-                "button_list": [
-                    {
-                        "text": "View Draft",
-                        "style": 1,
-                        "key": "view_draft",
-                        "url": f"https://mail.google.com/mail/u/0/#drafts?compose={draft_id}"
-                    },
-                    {
-                        "text": "Mark as Processed",
-                        "style": 2,
-                        "key": "mark_processed"
-                    }
-                ]
-            }
 
         return message
 
