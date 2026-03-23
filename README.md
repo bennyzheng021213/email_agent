@@ -50,7 +50,7 @@ email_agent/
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/email-agent.git
+git clone git@github.com:bennyzheng021213/email_agent.git
 cd email-agent
 ```
 
