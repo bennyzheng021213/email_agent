@@ -29,7 +29,11 @@ class GmailClient:
             creds = None
 
             # Parse scopes from string to list
-            scopes_list = settings.gmail_scopes.split(",")
+            scopes_list = [
+                scope.strip()
+                for scope in settings.gmail_scopes.split(",")
+                if scope.strip()
+            ]
 
             # Check if token exists
             if os.path.exists(settings.gmail_token_path):
@@ -40,8 +44,16 @@ class GmailClient:
             # If there are no (valid) credentials available, let the user log in
             if not creds or not creds.valid:
                 if creds and creds.expired and creds.refresh_token:
-                    creds.refresh(Request())
-                else:
+                    try:
+                        creds.refresh(Request())
+                    except Exception as refresh_error:
+                        logger.warning(
+                            f"Gmail token refresh failed, re-authentication required: {refresh_error}"
+                        )
+                        self._delete_stale_token()
+                        creds = None
+
+                if not creds or not creds.valid:
                     if not os.path.exists(settings.gmail_credentials_path):
                         raise FileNotFoundError(
                             f"Credentials file not found at {settings.gmail_credentials_path}. "
@@ -64,6 +76,15 @@ class GmailClient:
         except Exception as e:
             logger.error(f"Gmail authentication failed: {e}")
             raise
+
+    def _delete_stale_token(self):
+        """Delete invalid cached token so OAuth can start cleanly."""
+        try:
+            if os.path.exists(settings.gmail_token_path):
+                os.remove(settings.gmail_token_path)
+                logger.info(f"Deleted stale Gmail token: {settings.gmail_token_path}")
+        except OSError as error:
+            logger.warning(f"Failed to delete stale Gmail token: {error}")
 
     def get_unread_emails(self, max_results: int = None) -> List[Dict[str, Any]]:
         """Get unread emails from inbox"""

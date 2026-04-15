@@ -90,6 +90,7 @@ DEEPSEEK_API_BASE=https://api.deepseek.com/v1
 # Gmail API Configuration
 GMAIL_CREDENTIALS_PATH=./credentials.json
 GMAIL_TOKEN_PATH=./token.json
+GMAIL_SCOPES=https://www.googleapis.com/auth/gmail.readonly,https://www.googleapis.com/auth/gmail.modify,https://www.googleapis.com/auth/gmail.compose
 
 # WeChat Notification (optional)
 WECHAT_WEBHOOK_URL=your_wechat_webhook_url
@@ -97,7 +98,7 @@ WECHAT_WEBHOOK_URL=your_wechat_webhook_url
 # Application Settings
 APP_NAME=EmailAgent
 LOG_LEVEL=INFO
-CHECK_INTERVAL_SECONDS=60
+CHECK_INTERVAL_SECONDS=15
 MAX_EMAILS_PER_CHECK=10
 
 # Email Filter Settings
@@ -115,10 +116,12 @@ python main.py --mode once
 ```
 
 ### Continuous Monitoring Mode
-Monitor inbox continuously (every 60 seconds by default):
+Monitor inbox continuously (every 15 seconds by default):
 ```bash
 python main.py --mode continuous
 ```
+
+If Gmail auth fails with `invalid_grant`, delete `token.json` and run again to complete OAuth in the browser. The app now also auto-removes stale tokens and retries with fresh authorization.
 
 With custom interval (every 30 seconds):
 ```bash

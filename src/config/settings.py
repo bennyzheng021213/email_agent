@@ -18,7 +18,9 @@ class Settings(BaseSettings):
     gmail_credentials_path: str = Field("./credentials.json", env="GMAIL_CREDENTIALS_PATH")
     gmail_token_path: str = Field("./token.json", env="GMAIL_TOKEN_PATH")
     gmail_scopes: str = Field(
-        "https://www.googleapis.com/auth/gmail.readonly,https://www.googleapis.com/auth/gmail.modify",
+        "https://www.googleapis.com/auth/gmail.readonly,"
+        "https://www.googleapis.com/auth/gmail.modify,"
+        "https://www.googleapis.com/auth/gmail.compose",
         env="GMAIL_SCOPES"
     )
 
@@ -31,7 +33,7 @@ class Settings(BaseSettings):
     # Application Settings
     app_name: str = Field("EmailAgent", env="APP_NAME")
     log_level: str = Field("INFO", env="LOG_LEVEL")
-    check_interval_seconds: int = Field(60, env="CHECK_INTERVAL_SECONDS")
+    check_interval_seconds: int = Field(15, env="CHECK_INTERVAL_SECONDS")
     max_emails_per_check: int = Field(10, env="MAX_EMAILS_PER_CHECK")
 
     # Email Filter Settings

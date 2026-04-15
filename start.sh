@@ -76,8 +76,8 @@ case $mode in
         ;;
     2)
         echo "Starting continuous run mode..."
-        read -p "Check interval (seconds) [default 60]: " interval
-        interval=${interval:-60}
+        read -p "Check interval (seconds) [default 15]: " interval
+        interval=${interval:-15}
         echo "Checking for new emails every ${interval} seconds"
         python main.py --mode continuous --interval $interval
         ;;
